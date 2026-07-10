@@ -1,0 +1,95 @@
+# ✦ The Book That Everyone Judged Before Reading
+
+> **"Do not judge a book by its cover."**
+
+An interactive storytelling experience about appearance, perception, empathy, and the hidden worlds inside every person.
+
+## 📖 About The Project
+
+**The Book That Everyone Judged Before Reading** is a digital story created by **Light Shadow Knight** that explores a question many people know, but few truly follow:
+
+> If everyone believes we should not judge people by appearance, why does the world still do it?
+
+Through a cinematic web experience, this project encourages readers to look beyond the surface and understand the emotions, creativity, struggles, and experiences that shape every individual.
+
+A person is not just what we see.
+
+**A person is a universe of stories waiting to be understood.**
+
+## ✨ Features
+
+* 🌌 Cinematic dark-themed storytelling interface
+* ⭐ Animated star background and visual effects
+* 📖 Smooth reading experience with reveal animations
+* 💭 Reflection section for personal experiences
+* 📝 Optional story-sharing form
+* 📤 Built-in sharing system
+* 📱 Responsive design for desktop and mobile devices
+* 🔗 Social media integration
+
+## 🎯 Purpose
+
+This project was created to spread a message of empathy and understanding.
+
+The world often judges people by their appearance, first impressions, or outer image. But behind every person is a story that cannot be seen immediately.
+
+Before judging someone, remember:
+
+> You are seeing only one page of their story, not the entire book.
+
+## 🛠️ Technologies Used
+
+* HTML5
+* CSS3
+* JavaScript
+* Responsive Web Design
+* Modern Browser APIs
+
+## 🚀 How To Run
+
+1. Clone this repository:
+
+```bash
+git clone https://github.com/yourusername/your-repository-name.git
+```
+
+2. Open the project folder.
+
+3. Open `index.html` in your browser.
+
+No installation or server setup is required.
+
+## 📂 Project Structure
+
+```
+The-Book-Before-Reading/
+│
+├── index.html
+├── README.md
+└── assets/
+```
+
+## 👤 Creator
+
+Created by:
+
+**Light Shadow Knight**
+
+A story about seeing beyond the surface.
+
+## 🌐 Connect
+
+* Instagram: Light Shadow Knight
+* YouTube: Light Shadow Knight
+* X: Light Shadow Knight
+* Website: Light Web Official
+
+## 📜 License
+
+Copyright © 2026 Light Shadow Knight
+
+All rights reserved.
+
+This project, including its written content, design, artwork, and source code, is protected by copyright.
+
+You may view this repository for personal and educational purposes. You may not copy, modify, redistribute, publish, or use any part of this project without permission from the creator.
