@@ -1,0 +1,1720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+    <title>Light Shadow Knight · The Book That Everyone Judged Before Reading</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <style>
+        /* ============================================================
+                   ROOT & RESET
+                   ============================================================ */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #05050a;
+            --bg2: #0a0f1f;
+            --gold: #f5d76e;
+            --gold2: #d4af37;
+            --gold-dim: rgba(245, 215, 110, 0.15);
+            --gold-glow: rgba(245, 215, 110, 0.35);
+            --text: #eaeaf0;
+            --text-muted: #9aa0aa;
+            --glass: rgba(10, 15, 31, 0.70);
+            --glass-border: rgba(245, 215, 110, 0.10);
+            --radius: 20px;
+            --shadow: 0 8px 48px rgba(0, 0, 0, 0.6);
+            --transition: 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --font-serif: 'Playfair Display', serif;
+            --font-sans: 'Inter', sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.7;
+            cursor: none;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* reduce motion */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+            html {
+                scroll-behavior: auto;
+            }
+            .cursor-glow,
+            .particle-trail,
+            .click-ripple,
+            .click-particle {
+                display: none !important;
+            }
+            body {
+                cursor: auto !important;
+            }
+            a,
+            button,
+            .btn,
+            .share-btn {
+                cursor: pointer !important;
+            }
+        }
+
+        /* ============================================================
+                   SCROLLBAR
+                   ============================================================ */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--gold2);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gold);
+        }
+
+        /* ============================================================
+                   STARS (background)
+                   ============================================================ */
+        #stars {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            background: radial-gradient(circle at 30% 40%, #0f1a2e 0%, #05050a 100%);
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .star {
+            position: absolute;
+            border-radius: 50%;
+            background: #fff;
+            opacity: 0;
+            animation: twinkle var(--dur, 4s) infinite alternate;
+            box-shadow: 0 0 6px rgba(255, 255, 255, 0.2);
+            pointer-events: none;
+        }
+        @keyframes twinkle {
+            0% {
+                opacity: 0;
+                transform: scale(0.6);
+            }
+            100% {
+                opacity: var(--max-opacity, 0.9);
+                transform: scale(1);
+            }
+        }
+
+        /* ============================================================
+                   CUSTOM CURSOR
+                   ============================================================ */
+        .cursor-glow {
+            position: fixed;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(245, 215, 110, 0.50) 0%, rgba(245, 215, 110, 0.10) 60%, transparent 80%);
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: screen;
+            transform: translate(-50%, -50%);
+            will-change: transform, width, height;
+            transition: width 0.2s, height 0.2s, opacity 0.25s;
+            box-shadow: 0 0 40px rgba(245, 215, 110, 0.15);
+        }
+        .cursor-glow .core {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--gold);
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 20px var(--gold);
+            transition: width 0.25s, height 0.25s;
+        }
+        .cursor-glow.hover {
+            width: 52px;
+            height: 52px;
+            opacity: 0.9;
+        }
+        .cursor-glow.hover .core {
+            width: 10px;
+            height: 10px;
+        }
+
+        /* ── Particle trail ── */
+        .trail-particle {
+            position: fixed;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--gold) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 9998;
+            mix-blend-mode: screen;
+            will-change: transform, opacity;
+            opacity: 0;
+        }
+
+        /* ── Click ripple ── */
+        .click-ripple {
+            position: fixed;
+            border-radius: 50%;
+            border: 2px solid rgba(245, 215, 110, 0.4);
+            pointer-events: none;
+            z-index: 9997;
+            transform: translate(-50%, -50%) scale(0);
+            animation: rippleOut 0.8s ease-out forwards;
+            will-change: transform, opacity;
+        }
+        @keyframes rippleOut {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* ── Click particles ── */
+        .click-particle {
+            position: fixed;
+            border-radius: 50%;
+            background: var(--gold);
+            pointer-events: none;
+            z-index: 9997;
+            will-change: transform, opacity;
+            box-shadow: 0 0 12px var(--gold);
+        }
+
+        /* ============================================================
+                   PROGRESS BAR
+                   ============================================================ */
+        #progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2.5px;
+            background: linear-gradient(90deg, var(--gold), var(--gold2), var(--gold));
+            z-index: 999;
+            width: 0%;
+            transition: width 0.08s linear;
+            box-shadow: 0 0 20px rgba(245, 215, 110, 0.25);
+        }
+
+        /* ============================================================
+                   TOP NAVIGATION
+                   ============================================================ */
+        .top-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 14px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(5, 5, 10, 0.55);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border-bottom: 1px solid rgba(245, 215, 110, 0.06);
+            transition: background 0.4s, box-shadow 0.4s;
+            gap: 12px;
+        }
+        .top-nav.scrolled {
+            background: rgba(5, 5, 10, 0.80);
+            box-shadow: 0 4px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--gold);
+            font-family: var(--font-serif);
+            font-weight: 700;
+            font-size: 18px;
+            letter-spacing: 0.5px;
+            transition: opacity 0.3s;
+        }
+        .nav-brand:hover {
+            opacity: 0.8;
+        }
+        .nav-brand .logo-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--gold2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: var(--bg);
+            font-weight: 800;
+            font-family: var(--font-serif);
+            box-shadow: 0 0 20px rgba(245, 215, 110, 0.15);
+            flex-shrink: 0;
+        }
+        .nav-brand .brand-text {
+            font-size: clamp(14px, 2vw, 20px);
+            letter-spacing: 0.3px;
+        }
+        .nav-brand .brand-text span {
+            font-weight: 300;
+            color: var(--text-muted);
+        }
+
+        .nav-share {
+            background: var(--glass);
+            border: 1px solid rgba(245, 215, 110, 0.12);
+            border-radius: 40px;
+            padding: 8px 18px;
+            color: var(--gold);
+            font-size: 14px;
+            font-weight: 500;
+            font-family: var(--font-sans);
+            cursor: pointer;
+            transition: background 0.3s, box-shadow 0.3s, transform 0.25s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            letter-spacing: 0.2px;
+        }
+        .nav-share:hover {
+            background: rgba(245, 215, 110, 0.10);
+            box-shadow: 0 0 30px rgba(245, 215, 110, 0.08);
+            transform: translateY(-1px);
+        }
+        .nav-share:active {
+            transform: scale(0.95);
+        }
+
+        /* ============================================================
+                   HERO
+                   ============================================================ */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 100px 24px 60px;
+            position: relative;
+            background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1920') center/cover no-repeat;
+            background-attachment: fixed;
+        }
+        .hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(5, 5, 10, 0.55) 0%, rgba(5, 5, 10, 0.88) 80%, var(--bg) 100%);
+            z-index: 1;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 820px;
+            animation: heroFade 1.4s ease forwards;
+        }
+        @keyframes heroFade {
+            0% {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-content .hero-badge {
+            display: inline-block;
+            padding: 6px 18px;
+            border-radius: 40px;
+            border: 1px solid rgba(245, 215, 110, 0.15);
+            font-size: 12px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gold);
+            background: rgba(245, 215, 110, 0.04);
+            margin-bottom: 24px;
+            font-weight: 400;
+        }
+        .hero-content h1 {
+            font-family: var(--font-serif);
+            font-size: clamp(38px, 8vw, 80px);
+            font-weight: 800;
+            color: var(--gold);
+            text-shadow: 0 0 60px rgba(245, 215, 110, 0.15);
+            line-height: 1.1;
+            letter-spacing: -0.5px;
+        }
+        .hero-content .subtitle {
+            font-size: clamp(16px, 2vw, 24px);
+            font-weight: 300;
+            color: rgba(255, 255, 255, 0.75);
+            margin-top: 14px;
+            letter-spacing: 2px;
+            font-style: italic;
+            border-top: 1px solid rgba(245, 215, 110, 0.08);
+            padding-top: 18px;
+            display: inline-block;
+        }
+        .hero-content .hero-divider {
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 18px auto 0;
+            border-radius: 4px;
+        }
+
+        /* ============================================================
+                   CONTAINER & GLASS
+                   ============================================================ */
+        .container {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 20px 20px 60px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .glass {
+            background: var(--glass);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            padding: 32px 28px;
+            margin: 32px 0;
+            box-shadow: var(--shadow);
+            transition: box-shadow var(--transition), transform var(--transition);
+        }
+        .glass:hover {
+            box-shadow: 0 0 50px rgba(245, 215, 110, 0.04);
+        }
+
+        /* ============================================================
+                   STORY
+                   ============================================================ */
+        .story {
+            padding: 28px 24px;
+        }
+        .story p {
+            margin-bottom: 20px;
+            font-size: 16.5px;
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 0.9s ease, transform 0.9s ease;
+            white-space: pre-wrap;
+            line-height: 1.9;
+            color: rgba(255, 255, 255, 0.88);
+        }
+        .story p.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .story p:last-child {
+            margin-bottom: 0;
+        }
+        .story p:first-of-type {
+            font-size: 20px;
+            font-weight: 500;
+            color: var(--gold);
+            font-family: var(--font-serif);
+            letter-spacing: 0.3px;
+        }
+
+        /* ============================================================
+                   QUESTION / SECTIONS
+                   ============================================================ */
+        #questionSection h2 {
+            text-align: center;
+            font-size: clamp(20px, 3vw, 30px);
+            font-family: var(--font-serif);
+            color: var(--gold);
+            font-weight: 600;
+        }
+        .q-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ============================================================
+                   BUTTONS
+                   ============================================================ */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 30px;
+            background: linear-gradient(135deg, var(--gold), var(--gold2));
+            color: #05050a;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            font-family: var(--font-sans);
+            cursor: pointer;
+            transition: transform 0.25s, box-shadow 0.3s, background 0.3s;
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.2px;
+            box-shadow: 0 4px 24px rgba(245, 215, 110, 0.15);
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 40px rgba(245, 215, 110, 0.25);
+        }
+        .btn:active {
+            transform: scale(0.95);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid var(--gold);
+            color: var(--gold);
+            box-shadow: none;
+        }
+        .btn-outline:hover {
+            background: rgba(245, 215, 110, 0.06);
+            box-shadow: 0 0 30px rgba(245, 215, 110, 0.06);
+        }
+
+        /* ============================================================
+                   YES SECTION – now just a single "Open Form" button
+                   ============================================================ */
+        .form-button-wrap {
+            text-align: center;
+            margin-top: 24px;
+        }
+        .form-button-wrap .btn {
+            font-size: 18px;
+            padding: 16px 40px;
+        }
+
+        .thank {
+            color: #8aff8a;
+            text-align: center;
+            font-size: 18px;
+            margin-top: 18px;
+            animation: popIn 0.6s ease forwards;
+        }
+        @keyframes popIn {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            60% {
+                transform: scale(1.04);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* ============================================================
+                   SOCIAL / SHARE SECTION
+                   ============================================================ */
+        .social-links {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 18px 0 12px;
+        }
+        .social-links a {
+            padding: 10px 18px;
+            border-radius: 12px;
+            background: var(--glass);
+            border: 1px solid rgba(245, 215, 110, 0.06);
+            color: var(--gold);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: background 0.25s, transform 0.25s, box-shadow 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+        .social-links a:hover {
+            background: rgba(245, 215, 110, 0.06);
+            transform: translateY(-2px);
+            box-shadow: 0 0 24px rgba(245, 215, 110, 0.04);
+        }
+        .social-links a:active {
+            transform: scale(0.95);
+        }
+
+        /* ============================================================
+                   FOOTER
+                   ============================================================ */
+        footer {
+            text-align: center;
+            padding: 50px 20px 32px;
+            border-top: 1px solid rgba(245, 215, 110, 0.05);
+            margin-top: 20px;
+            position: relative;
+            z-index: 2;
+        }
+        footer .footer-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-family: var(--font-serif);
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 12px;
+            text-decoration: none;
+        }
+        footer .footer-brand .logo-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--gold2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: var(--bg);
+            font-weight: 800;
+            font-family: var(--font-serif);
+            box-shadow: 0 0 20px rgba(245, 215, 110, 0.10);
+        }
+        footer .footer-credit {
+            color: var(--text-muted);
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            font-weight: 300;
+        }
+        footer .footer-credit strong {
+            color: var(--gold);
+            font-weight: 500;
+        }
+        footer .footer-social {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+        footer .footer-social a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 13px;
+            transition: color 0.3s, transform 0.25s;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        footer .footer-social a:hover {
+            color: var(--gold);
+            transform: translateY(-2px);
+        }
+        footer .footer-copy {
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 12px;
+            margin-top: 18px;
+            letter-spacing: 0.5px;
+        }
+
+        /* ============================================================
+                   SHARE MODAL
+                   ============================================================ */
+        .share-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 9998;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s, visibility 0.4s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .share-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .share-modal {
+            background: var(--bg2);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 40px 36px 32px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8);
+            transform: scale(0.92) translateY(30px);
+            transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.35s;
+            opacity: 0;
+            position: relative;
+        }
+        .share-overlay.open .share-modal {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        .share-modal .modal-close {
+            position: absolute;
+            top: 14px;
+            right: 18px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 4px 10px;
+            line-height: 1;
+            transition: color 0.25s, transform 0.25s;
+            font-family: var(--font-sans);
+        }
+        .share-modal .modal-close:hover {
+            color: var(--text);
+            transform: rotate(90deg);
+        }
+
+        .share-modal h2 {
+            font-size: 26px;
+            text-align: center;
+            font-family: var(--font-serif);
+            color: var(--gold);
+            margin-bottom: 4px;
+        }
+        .share-modal .sub {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .share-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .share-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 14px 10px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--text);
+            font-weight: 500;
+            font-size: 14px;
+            font-family: var(--font-sans);
+            cursor: pointer;
+            transition: background 0.25s, transform 0.2s, box-shadow 0.25s, border-color 0.25s;
+            text-decoration: none;
+        }
+        .share-btn:hover {
+            background: rgba(255, 255, 255, 0.04);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+        }
+        .share-btn:active {
+            transform: scale(0.95);
+        }
+        .share-btn .icon {
+            font-size: 20px;
+            line-height: 1;
+        }
+        .share-btn .label {
+            font-size: 13px;
+        }
+        .share-btn.whatsapp:hover {
+            background: rgba(37, 211, 102, 0.08);
+            border-color: rgba(37, 211, 102, 0.15);
+        }
+        .share-btn.instagram:hover {
+            background: rgba(225, 48, 108, 0.08);
+            border-color: rgba(225, 48, 108, 0.15);
+        }
+        .share-btn.x:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+        .share-btn.email:hover {
+            background: rgba(100, 149, 237, 0.06);
+            border-color: rgba(100, 149, 237, 0.12);
+        }
+        .share-btn.copy:hover {
+            background: rgba(245, 215, 110, 0.04);
+            border-color: rgba(245, 215, 110, 0.08);
+        }
+
+        .share-divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 12px 0 16px;
+            color: var(--text-muted);
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+        .share-divider::before,
+        .share-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .share-modal .btn-full {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--text);
+            font-size: 14px;
+            font-family: var(--font-sans);
+            cursor: pointer;
+            transition: background 0.25s, transform 0.2s;
+            text-align: center;
+            font-weight: 500;
+        }
+        .share-modal .btn-full:hover {
+            background: rgba(255, 255, 255, 0.04);
+            transform: translateY(-1px);
+        }
+        .share-modal .btn-full:active {
+            transform: scale(0.97);
+        }
+
+        /* ============================================================
+                   TOAST
+                   ============================================================ */
+        .toast {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--bg2);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 14px 28px;
+            color: var(--text);
+            font-size: 14px;
+            font-family: var(--font-sans);
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.35s, transform 0.35s, visibility 0.35s;
+            z-index: 99999;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            font-weight: 400;
+            pointer-events: none;
+            white-space: nowrap;
+            letter-spacing: 0.2px;
+        }
+        .toast.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* ============================================================
+                   RESPONSIVE
+                   ============================================================ */
+        @media (max-width: 680px) {
+            .top-nav {
+                padding: 10px 16px;
+            }
+            .nav-brand .brand-text span {
+                display: none;
+            }
+            .hero {
+                padding: 80px 16px 40px;
+                background-attachment: scroll;
+            }
+            .container {
+                padding: 10px 14px 40px;
+            }
+            .glass {
+                padding: 24px 18px;
+                margin: 24px 0;
+            }
+            .story {
+                padding: 16px 14px;
+            }
+            .story p {
+                font-size: 15px;
+            }
+            .share-modal {
+                padding: 28px 18px 22px;
+            }
+            .share-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            .share-btn {
+                padding: 12px 6px;
+                font-size: 13px;
+            }
+            .share-btn .icon {
+                font-size: 18px;
+            }
+            .share-btn .label {
+                font-size: 11px;
+            }
+            .cursor-glow {
+                display: none;
+            }
+            .trail-particle {
+                display: none;
+            }
+            body {
+                cursor: auto;
+            }
+            .btn,
+            .share-btn,
+            .nav-share,
+            .social-links a {
+                cursor: pointer;
+            }
+            .toast {
+                white-space: normal;
+                max-width: 90%;
+                bottom: 70px;
+                padding: 12px 20px;
+                font-size: 13px;
+            }
+            .nav-share span {
+                display: none;
+            }
+            .nav-share {
+                padding: 8px 14px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .hero-content h1 {
+                font-size: 30px;
+            }
+            .share-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+            }
+        }
+
+        @media (pointer: coarse) {
+            .cursor-glow,
+            .trail-particle {
+                display: none;
+            }
+            body {
+                cursor: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================================
+    STARS (background)
+    ============================================================ -->
+    <div id="stars"></div>
+
+    <!-- ============================================================
+    PROGRESS BAR
+    ============================================================ -->
+    <div id="progress"></div>
+
+    <!-- ============================================================
+    CUSTOM CURSOR
+    ============================================================ -->
+    <div class="cursor-glow" id="cursorGlow">
+        <div class="core"></div>
+    </div>
+
+    <!-- ============================================================
+    TOAST
+    ============================================================ -->
+    <div class="toast" id="toast"></div>
+
+    <!-- ============================================================
+    TOP NAVIGATION
+    ============================================================ -->
+    <nav class="top-nav" id="topNav">
+        <a href="#" class="nav-brand" id="navBrand">
+            <span class="logo-icon">✦</span>
+            <span class="brand-text">Light <span>Shadow Knight</span></span>
+        </a>
+        <button class="nav-share" id="navShareBtn">
+            <span>📤</span>
+            <span>Share</span>
+        </button>
+    </nav>
+
+    <!-- ============================================================
+    HERO
+    ============================================================ -->
+    <section class="hero" id="hero">
+        <div class="hero-content">
+            <div class="hero-badge">✦ A Story About Seeing Deeper</div>
+            <h1>The Book That Everyone Judged Before Reading</h1>
+            <div class="subtitle">“Do not judge a book by its cover.”</div>
+            <div class="hero-divider"></div>
+        </div>
+    </section>
+
+    <!-- ============================================================
+    MAIN CONTENT
+    ============================================================ -->
+    <div class="container">
+
+        <!-- ─── STORY ─── -->
+        <div class="story glass" id="story">
+            <p>“Do not judge a book by its cover.”</p>
+            <p>A sentence that almost everyone has heard. A sentence that almost everyone agrees with.</p>
+            <p>People say that looks do not matter. They say that a person's value is not decided by their face, their appearance, their clothes, or the way they look from the outside. They say that what truly matters is the person hidden inside.</p>
+            <p>But Light Shadow Knight always wondered about one question:</p>
+            <p>If everyone believes this, then why does the world still behave differently?</p>
+            <p>Humans are naturally attracted to beauty. Before knowing someone's thoughts, dreams, struggles, or kindness, people often notice their appearance first. Sometimes, without even realizing it, they create an entire image of a person based only on what their eyes see.</p>
+            <p>Light Shadow Knight was not separate from this reality.</p>
+            <p>He believed that people should not be judged by their appearance, yet he also discovered that sometimes even he had unknowingly followed the same habit. He had judged people before understanding their stories.</p>
+            <p>Then one experience changed the way Light Shadow Knight saw the world.</p>
+            <p>Inside one chapter of his journey, Light Shadow Knight met a person who was constantly judged because of appearance. People laughed, made comments, and saw only what was visible from the outside. They never tried to understand the mind, emotions, and abilities hidden behind that appearance.</p>
+            <p>That person was quiet and introverted. Because she did not express herself loudly, many people assumed there was nothing special inside.</p>
+            <p>Light Shadow Knight also became a part of that mistake. He did not pretend that he was always different. He had also joined those who judged without knowing the truth.</p>
+            <p>But one day, curiosity appeared.</p>
+            <p>Instead of only looking at the outside, Light Shadow Knight decided to understand the person behind it.</p>
+            <p>And then he discovered an entirely different world.</p>
+            <p>Behind the silence was creativity. Behind the shy personality was imagination. The person who was ignored by many was actually an artist and a writer. At a young age, she had already created things that proved her talent and dedication.</p>
+            <p>She did not spend all her energy fighting against every person who judged her. Instead, she transformed that energy into creating something meaningful.</p>
+            <p>That moment taught Light Shadow Knight a lesson:</p>
+            <p>A person is not a picture. A person is a universe.</p>
+            <p>Sadly, that character from his story disappeared because of illness. But the lesson remained.</p>
+            <p>The world often says, “Do not judge people by looks.” But how many people truly follow it?</p>
+            <p>People agree with the words, but many do not change their actions.</p>
+            <p>And before blaming only individuals, Light Shadow Knight believes society itself must be questioned.</p>
+            <p>Because from childhood, humans are surrounded by messages that quietly teach them what is considered beautiful and what is considered unacceptable.</p>
+            <p>In stories, movies, and fictional worlds, appearance is often given more importance than personality. Many times, the beautiful character receives admiration while the person who looks different becomes a joke, an enemy, or someone who is ignored.</p>
+            <p>The world often creates a pattern where beauty is connected with goodness and unusual appearances are connected with negativity.</p>
+            <p>But reality is not written by that pattern.</p>
+            <p>A beautiful face can hide a cruel heart, and an ordinary appearance can hide extraordinary kindness.</p>
+            <p>Social media has made this even more complicated.</p>
+            <p>People use filters, editing tools, and digital identities to create versions of themselves that look different from reality. Many people hide behind perfect images because the world has created pressure to appear flawless.</p>
+            <p>Even virtual characters, avatars, and digital identities show how strongly humans are connected to appearance.</p>
+            <p>There is nothing wrong with creativity or imagination. The problem begins when people start believing that the outer image is more important than the person creating it.</p>
+            <p>Even those who teach us not to judge sometimes become part of the same system.</p>
+            <p>Parents, teachers, friends, creators, and authorities all influence how people see the world. The words they say, the examples they show, and the values they pass forward shape the next generation.</p>
+            <p>So before trying to change others, society should first look at itself.</p>
+            <p>Before telling people, “Do not judge,” society should ask:</p>
+            <p>“Have we created an environment where people truly believe that?”</p>
+            <p>Nature has been answering this question for millions of years.</p>
+            <p>Imagine Light Shadow Knight standing on the deck of a ship, looking at the ocean.</p>
+            <p>From the surface, the water may appear simple. After seeing the same waves again and again, someone may stop finding it beautiful.</p>
+            <p>But if that person dives beneath the surface, they discover an entire hidden universe. A world filled with colours, creatures, and mysteries that cannot be understood from above.</p>
+            <p>The ocean teaches a lesson:</p>
+            <p>The surface is only a small part of reality.</p>
+            <p>The same lesson can be seen when looking at Earth from space.</p>
+            <p>From far away, the planet appears peaceful and beautiful. Cities look like glowing patterns. The world seems almost perfect.</p>
+            <p>But when humans return closer to the ground, they see pollution, noise, crowded streets, and countless problems.</p>
+            <p>The view changed, so the meaning changed.</p>
+            <p>Perspective has the power to transform everything.</p>
+            <p>A seed looks small and ordinary, but inside it carries the possibility of a giant tree. A simple shell may hide a beautiful pearl. A quiet person may hold an imagination larger than anyone expects.</p>
+            <p>Every person is like that.</p>
+            <p>Someone's behaviour, appearance, or current situation is only one page of their story. To understand the whole book, people must look deeper.</p>
+            <p>Even a person who behaves badly has a story behind them. This does not mean every action should be accepted, but it means humans should try to understand what shaped that person.</p>
+            <p>Nobody enters this world as a complete villain.</p>
+            <p>A child is born with innocence. Then experiences, surroundings, pain, love, and circumstances slowly shape the person they become.</p>
+            <p>Like a scientific experiment, different catalysts can change the result.</p>
+            <p>Instead of only judging the final result, humans should also understand the causes behind it.</p>
+            <p>Because if everyone only judges and nobody understands, the world loses kindness.</p>
+            <p>People lose trust. People lose confidence. People lose the chance to heal.</p>
+            <p>Some people are strong enough to ignore criticism because they know their own worth. But many people are silently affected by the opinions of others.</p>
+            <p>A single judgment can become a heavy burden.</p>
+            <p>A single act of kindness can become a reason for someone to continue moving forward.</p>
+            <p>So Light Shadow Knight believes that before judging anyone, humans should first learn to become more gentle, more patient, and more understanding.</p>
+            <p>Look beyond the face.</p>
+            <p>Look beyond the cover.</p>
+            <p>Because every person is a book written by countless experiences.</p>
+            <p>And the greatest mistake humanity makes is judging the story before reading the pages inside.</p>
+        </div>
+
+        <!-- ─── REFLECTION QUESTION ─── -->
+        <section class="glass" id="questionSection">
+            <h2>Have you also been judged by your looks?</h2>
+            <div class="q-buttons">
+                <button class="btn" id="yesBtn">Yes</button>
+                <button class="btn btn-outline" id="noBtn">No</button>
+            </div>
+        </section>
+
+        <!-- ─── YES SECTION – Google Form opens directly ─── -->
+        <section id="yesSection" class="glass hidden">
+            <p>You've taken the first step by saying "Yes." Thank you for trusting us.</p>
+            <p>If you've ever been judged because of your appearance, your silence, or simply for being yourself, we're truly sorry you had to go through that.</p>
+            <p>Here, your story matters more than your looks.</p>
+            <p>We won't judge you. We won't laugh at you. We won't compare you to anyone else.</p>
+            <p>If you'd like, you can share your experience with us. Whether it's a few words or your whole story, we'll read it with care and respect.</p>
+            <p>Sharing is completely your choice. There is no pressure, and if you're not ready today, that's perfectly okay.</p>
+            <p>Sometimes, telling your story can help someone else realize they're not alone.</p>
+            <p>Whenever you're ready, we're here to listen. ❤️</p>
+
+            <!-- Single button: opens Google Form in a new tab -->
+            <div class="form-button-wrap">
+                <a href="https://forms.gle/ysFkDBCiTvKnaCdM7" target="_blank" class="btn" id="openFormBtn">
+                    📝 Share Your Story
+                </a>
+            </div>
+            <p style="font-size:13px; color:var(--text-muted); margin-top:12px; text-align:center;">
+                Opens Google Forms in a new tab. Your privacy and voice are respected.
+            </p>
+        </section>
+
+        <!-- ─── NO SECTION ─── -->
+        <section id="noSection" class="glass hidden">
+            <p>That's completely okay. ❤️</p>
+            <p>Not everyone has experienced being judged because of their appearance, and we're glad if you haven't.</p>
+            <p>Even so, thank you for taking the time to read this story.</p>
+            <p>We hope it reminds us all that every person has a story beyond what we can see. A little kindness, patience, and understanding can make a real difference in someone's life.</p>
+            <p>If you ever meet someone who is judged unfairly, we hope you'll choose compassion over assumptions.</p>
+            <p>Thank you for being here. Together, we can help create a world where people are valued for who they are, not just how they look. ❤️</p>
+            <div style="text-align:center; margin-top:22px;">
+                <button class="btn" id="continueFinalBtn">Continue</button>
+            </div>
+        </section>
+
+        <!-- ─── FINAL SECTION (Instagram Option) ─── -->
+        <section id="finalSection" class="glass hidden">
+            <p>Thank you for reading until the end. ❤️</p>
+            <p>We're happy that this wasn't something you personally experienced.</p>
+            <p>If this story made you pause, think, or see the world a little differently, we'd love to hear your thoughts.</p>
+            <p>You're warmly invited to leave a comment on our Instagram post. It doesn't have to be long. Even a few kind words, a reflection, or a message of support for others can mean a lot.</p>
+            <p>Every thoughtful comment helps this conversation reach more people and reminds someone out there that they are not alone.</p>
+            <p>Thank you for being part of this journey. Your kindness can make a difference. 🌿</p>
+            <p>💛 Visit our Instagram post and share your thoughts if you'd like.</p>
+            <div style="display:flex; gap:16px; justify-content:center; margin-top:22px; flex-wrap:wrap;">
+                <button class="btn" id="openIgBtn">📸 Yes, take me to Instagram</button>
+                <button class="btn btn-outline" id="skipShareBtn">No, let's continue</button>
+            </div>
+        </section>
+
+        <!-- ─── FOLLOW / SHARE SECTION ─── -->
+        <section class="glass" id="shareSection" style="text-align:center;">
+            <h2 style="font-family:var(--font-serif); color:var(--gold); font-size:clamp(22px,3vw,32px);">❤️ Enjoyed this story?</h2>
+            <p style="color:var(--text-muted); margin:6px 0 12px;">Please Follow ❤️ Like 👍 Share 📤 and help spread this message.</p>
+            <div class="social-links">
+                <a href="https://www.instagram.com/light_shadowknight/" target="_blank">📸 Instagram</a>
+                <a href="https://twitch.tv/light_shadowknight" target="_blank">🎮 Twitch</a>
+                <a href="https://x.com/Light3319355849" target="_blank">🐦 X</a>
+                <a href="https://www.youtube.com/@Light_Shadow_Knight" target="_blank">▶️ YouTube</a>
+                <a href="https://thelightwebofficial.renderforestsites.com/" target="_blank">🌐 Website</a>
+                <a href="https://medibang.com/u/THELIGHTWEBOFFICIAL/" target="_blank">🎨 Medibang</a>
+                <a href="#" id="copyLinkBtn">🔗 Copy Link</a>
+            </div>
+            <button class="btn" id="mainShareBtn" style="margin-top:8px;">📤 Share This Story</button>
+        </section>
+    </div>
+
+    <!-- ============================================================
+    FOOTER
+    ============================================================ -->
+    <footer>
+        <a href="#" class="footer-brand">
+            <span class="logo-icon">✦</span>
+            Light Shadow Knight
+        </a>
+        <div class="footer-credit">Created by <strong>Light</strong> · A story about seeing beyond the surface</div>
+        <div class="footer-social">
+            <a href="https://www.instagram.com/light_shadowknight/" target="_blank">Instagram</a>
+            <a href="https://twitch.tv/light_shadowknight" target="_blank">Twitch</a>
+            <a href="https://x.com/Light3319355849" target="_blank">X</a>
+            <a href="https://www.youtube.com/@Light_Shadow_Knight" target="_blank">YouTube</a>
+            <a href="https://thelightwebofficial.renderforestsites.com/" target="_blank">Website</a>
+            <a href="https://medibang.com/u/THELIGHTWEBOFFICIAL/" target="_blank">Medibang</a>
+        </div>
+        <div class="footer-copy">© 2026 Light Shadow Knight · All rights reserved</div>
+    </footer>
+
+    <!-- ============================================================
+    SHARE MODAL
+    ============================================================ -->
+    <div class="share-overlay" id="shareOverlay">
+        <div class="share-modal">
+            <button class="modal-close" id="shareCloseBtn" aria-label="Close share modal">✕</button>
+            <h2>📤 Share the story</h2>
+            <p class="sub">Help spread the message — every share matters.</p>
+
+            <div class="share-grid">
+                <button class="share-btn whatsapp" data-share="whatsapp">
+                    <span class="icon">💬</span>
+                    <span class="label">WhatsApp</span>
+                </button>
+                <button class="share-btn instagram" data-share="instagram">
+                    <span class="icon">📸</span>
+                    <span class="label">Instagram</span>
+                </button>
+                <button class="share-btn x" data-share="x">
+                    <span class="icon">🐦</span>
+                    <span class="label">X (Twitter)</span>
+                </button>
+                <button class="share-btn email" data-share="email">
+                    <span class="icon">✉️</span>
+                    <span class="label">Email</span>
+                </button>
+            </div>
+
+            <div class="share-divider">or</div>
+
+            <button class="btn-full" id="modalCopyBtn">🔗 Copy Link</button>
+
+            <button class="btn-full" id="modalCloseBtn" style="margin-top:10px; border-color:transparent; color:var(--text-muted);">Close</button>
+        </div>
+    </div>
+
+
+    <!-- ============================================================
+    JAVASCRIPT — Modular, Production-Ready
+    ============================================================ -->
+    <script>
+        (function() {
+            'use strict';
+
+            // ─── PREFERS-REDUCED-MOTION ───
+            const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            // ─── DOM REFS ───
+            const $ = (s, ctx) => (ctx || document).querySelector(s);
+            const $$ = (s, ctx) => (ctx || document).querySelectorAll(s);
+
+            const stars = document.getElementById('stars');
+            const progress = document.getElementById('progress');
+            const topNav = document.getElementById('topNav');
+            const cursorGlow = document.getElementById('cursorGlow');
+            const toast = document.getElementById('toast');
+            const storyEl = document.getElementById('story');
+
+            const questionSection = document.getElementById('questionSection');
+            const yesSection = document.getElementById('yesSection');
+            const noSection = document.getElementById('noSection');
+            const finalSection = document.getElementById('finalSection');
+            const yesBtn = document.getElementById('yesBtn');
+            const noBtn = document.getElementById('noBtn');
+            const continueFinalBtn = document.getElementById('continueFinalBtn');
+            const openIgBtn = document.getElementById('openIgBtn');
+            const skipShareBtn = document.getElementById('skipShareBtn');
+            const shareSection = document.getElementById('shareSection');
+
+            // ─── "Open Form" button (direct link) ───
+            const openFormBtn = document.getElementById('openFormBtn');
+
+            const navShareBtn = document.getElementById('navShareBtn');
+            const mainShareBtn = document.getElementById('mainShareBtn');
+            const shareOverlay = document.getElementById('shareOverlay');
+            const shareCloseBtn = document.getElementById('shareCloseBtn');
+            const modalCloseBtn = document.getElementById('modalCloseBtn');
+            const modalCopyBtn = document.getElementById('modalCopyBtn');
+            const copyLinkBtn = document.getElementById('copyLinkBtn');
+
+            const navBrand = document.getElementById('navBrand');
+
+            // ─── TOAST ───
+            let toastTimer = null;
+
+            function showToast(msg, duration) {
+                duration = duration || 2600;
+                toast.textContent = msg;
+                toast.classList.add('show');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, duration);
+            }
+
+            // ─── STARS ───
+            (function initStars() {
+                for (let i = 0; i < 140; i++) {
+                    const s = document.createElement('div');
+                    s.className = 'star';
+                    const size = 1.2 + Math.random() * 3.5;
+                    s.style.width = size + 'px';
+                    s.style.height = size + 'px';
+                    s.style.left = Math.random() * 100 + '%';
+                    s.style.top = Math.random() * 100 + '%';
+                    s.style.setProperty('--dur', (3 + Math.random() * 4) + 's');
+                    s.style.setProperty('--max-opacity', 0.3 + Math.random() * 0.6);
+                    s.style.animationDelay = (Math.random() * 6) + 's';
+                    stars.appendChild(s);
+                }
+            })();
+
+            // ─── CURSOR (desktop only) ───
+            let cursorX = -100,
+                cursorY = -100;
+            let targetX = -100,
+                targetY = -100;
+            let cursorVisible = false;
+
+            if (!reduceMotion && !('ontouchstart' in window)) {
+                // track mouse
+                document.addEventListener('mousemove', function(e) {
+                    targetX = e.clientX;
+                    targetY = e.clientY;
+                    if (!cursorVisible) {
+                        cursorVisible = true;
+                        cursorGlow.style.opacity = '1';
+                    }
+                });
+
+                document.addEventListener('mouseleave', function() {
+                    cursorVisible = false;
+                    cursorGlow.style.opacity = '0';
+                });
+
+                // smooth lerp loop
+                function animateCursor() {
+                    if (cursorVisible) {
+                        const dx = targetX - cursorX;
+                        const dy = targetY - cursorY;
+                        const ease = 0.12;
+                        cursorX += dx * ease;
+                        cursorY += dy * ease;
+                        cursorGlow.style.transform = 'translate(' + cursorX + 'px, ' + cursorY + 'px)';
+                    }
+                    requestAnimationFrame(animateCursor);
+                }
+                animateCursor();
+
+                // hover states
+                const hoverTargets = document.querySelectorAll(
+                    'a, button, .btn, .share-btn, .nav-share, .social-links a, .modal-close, .btn-full, .footer-social a, .nav-brand'
+                );
+                hoverTargets.forEach(el => {
+                    el.addEventListener('mouseenter', function() {
+                        cursorGlow.classList.add('hover');
+                    });
+                    el.addEventListener('mouseleave', function() {
+                        cursorGlow.classList.remove('hover');
+                    });
+                });
+
+                // ─── Particle Trail ───
+                let trailParticles = [];
+                let lastSpawn = 0;
+
+                function spawnTrailParticle(x, y) {
+                    if (!cursorVisible) return;
+                    const p = document.createElement('div');
+                    p.className = 'trail-particle';
+                    const size = 4 + Math.random() * 8;
+                    p.style.width = size + 'px';
+                    p.style.height = size + 'px';
+                    p.style.left = x + 'px';
+                    p.style.top = y + 'px';
+                    p.style.opacity = '0.6';
+                    p.style.transform = 'translate(-50%, -50%) scale(1)';
+                    document.body.appendChild(p);
+
+                    const startTime = performance.now();
+                    const duration = 500 + Math.random() * 400;
+                    const dx = (Math.random() - 0.5) * 30;
+                    const dy = (Math.random() - 0.5) * 30 - 10;
+
+                    function fadeParticle() {
+                        const elapsed = performance.now() - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+                        const opacity = 0.6 * (1 - progress);
+                        const scale = 1 + progress * 2;
+                        p.style.opacity = opacity;
+                        p.style.transform = 'translate(' + (dx * progress) + 'px, ' + (dy * progress) + 'px) scale(' +
+                            scale + ')';
+                        if (progress < 1) {
+                            requestAnimationFrame(fadeParticle);
+                        } else {
+                            p.remove();
+                        }
+                    }
+                    requestAnimationFrame(fadeParticle);
+                    trailParticles.push(p);
+                    if (trailParticles.length > 60) {
+                        const old = trailParticles.shift();
+                        if (old && old.parentNode) old.remove();
+                    }
+                }
+
+                function trailLoop(time) {
+                    if (cursorVisible && time - lastSpawn > 30) {
+                        spawnTrailParticle(cursorX, cursorY);
+                        lastSpawn = time;
+                        if (Math.random() > 0.6) {
+                            spawnTrailParticle(
+                                cursorX + (Math.random() - 0.5) * 12,
+                                cursorY + (Math.random() - 0.5) * 12
+                            );
+                        }
+                    }
+                    requestAnimationFrame(trailLoop);
+                }
+                requestAnimationFrame(trailLoop);
+
+                // ─── Click Ripple + Particles ───
+                document.addEventListener('click', function(e) {
+                    const x = e.clientX;
+                    const y = e.clientY;
+
+                    const ripple = document.createElement('div');
+                    ripple.className = 'click-ripple';
+                    const size = 20 + Math.random() * 20;
+                    ripple.style.width = size + 'px';
+                    ripple.style.height = size + 'px';
+                    ripple.style.left = x + 'px';
+                    ripple.style.top = y + 'px';
+                    ripple.style.borderColor = 'rgba(245,215,110,0.5)';
+                    document.body.appendChild(ripple);
+                    setTimeout(() => ripple.remove(), 900);
+
+                    const count = 10 + Math.floor(Math.random() * 8);
+                    for (let i = 0; i < count; i++) {
+                        const p = document.createElement('div');
+                        p.className = 'click-particle';
+                        const s = 3 + Math.random() * 6;
+                        p.style.width = s + 'px';
+                        p.style.height = s + 'px';
+                        p.style.left = x + 'px';
+                        p.style.top = y + 'px';
+                        p.style.background = `radial-gradient(circle, var(--gold) 0%, rgba(245,215,110,0.3) 100%)`;
+                        p.style.boxShadow = '0 0 12px rgba(245,215,110,0.3)';
+                        document.body.appendChild(p);
+
+                        const angle = Math.random() * 2 * Math.PI;
+                        const dist = 40 + Math.random() * 80;
+                        const dx = Math.cos(angle) * dist;
+                        const dy = Math.sin(angle) * dist;
+                        const dur = 500 + Math.random() * 400;
+                        const startTime = performance.now();
+
+                        function animParticle() {
+                            const elapsed = performance.now() - startTime;
+                            const prog = Math.min(elapsed / dur, 1);
+                            const ease = 1 - Math.pow(1 - prog, 3);
+                            p.style.transform = 'translate(' + (dx * ease) + 'px, ' + (dy * ease) +
+                                'px) scale(' + (1 + prog * 0.5) + ')';
+                            p.style.opacity = 1 - prog;
+                            if (prog < 1) {
+                                requestAnimationFrame(animParticle);
+                            } else {
+                                p.remove();
+                            }
+                        }
+                        requestAnimationFrame(animParticle);
+                    }
+                });
+
+            } else {
+                cursorGlow.style.display = 'none';
+            }
+
+            // ─── TOUCH RIPPLE (mobile) ───
+            document.addEventListener('touchstart', function(e) {
+                const touch = e.touches[0];
+                if (!touch) return;
+                const x = touch.clientX;
+                const y = touch.clientY;
+
+                const ripple = document.createElement('div');
+                ripple.className = 'click-ripple';
+                const size = 30 + Math.random() * 30;
+                ripple.style.width = size + 'px';
+                ripple.style.height = size + 'px';
+                ripple.style.left = x + 'px';
+                ripple.style.top = y + 'px';
+                ripple.style.borderColor = 'rgba(245,215,110,0.45)';
+                ripple.style.borderWidth = '2.5px';
+                document.body.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 1000);
+
+                for (let i = 0; i < 6; i++) {
+                    const p = document.createElement('div');
+                    p.className = 'click-particle';
+                    const s = 3 + Math.random() * 5;
+                    p.style.width = s + 'px';
+                    p.style.height = s + 'px';
+                    p.style.left = x + 'px';
+                    p.style.top = y + 'px';
+                    p.style.background = `radial-gradient(circle, var(--gold) 0%, rgba(245,215,110,0.2) 100%)`;
+                    document.body.appendChild(p);
+
+                    const angle = Math.random() * 2 * Math.PI;
+                    const dist = 20 + Math.random() * 50;
+                    const dx = Math.cos(angle) * dist;
+                    const dy = Math.sin(angle) * dist;
+                    const dur = 400 + Math.random() * 300;
+                    const startTime = performance.now();
+
+                    function animTouchParticle() {
+                        const elapsed = performance.now() - startTime;
+                        const prog = Math.min(elapsed / dur, 1);
+                        p.style.transform = 'translate(' + (dx * prog) + 'px, ' + (dy * prog) + 'px) scale(' + (1 +
+                            prog * 0.6) + ')';
+                        p.style.opacity = 1 - prog;
+                        if (prog < 1) {
+                            requestAnimationFrame(animTouchParticle);
+                        } else {
+                            p.remove();
+                        }
+                    }
+                    requestAnimationFrame(animTouchParticle);
+                }
+            }, { passive: true });
+
+            // ─── SCROLL: progress, nav, story reveal ───
+            let scrollRAF = null;
+
+            function handleScroll() {
+                if (scrollRAF) return;
+                scrollRAF = requestAnimationFrame(function() {
+                    const scrollY = window.scrollY;
+                    const h = document.documentElement.scrollHeight - window.innerHeight;
+                    progress.style.width = (scrollY / h) * 100 + '%';
+
+                    topNav.classList.toggle('scrolled', scrollY > 60);
+
+                    const paragraphs = storyEl.querySelectorAll('p');
+                    const winH = window.innerHeight;
+                    paragraphs.forEach(p => {
+                        const rect = p.getBoundingClientRect();
+                        if (rect.top < winH - 60) {
+                            p.classList.add('visible');
+                        }
+                    });
+
+                    scrollRAF = null;
+                });
+            }
+
+            window.addEventListener('scroll', handleScroll, { passive: true });
+            window.addEventListener('resize', handleScroll, { passive: true });
+            setTimeout(handleScroll, 200);
+
+            // ─── YES / NO ───
+            function revealSection(section) {
+                section.classList.remove('hidden');
+                setTimeout(() => section.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+            }
+
+            yesBtn.addEventListener('click', function() {
+                questionSection.classList.add('hidden');
+                revealSection(yesSection);
+            });
+
+            noBtn.addEventListener('click', function() {
+                questionSection.classList.add('hidden');
+                revealSection(noSection);
+            });
+
+            continueFinalBtn.addEventListener('click', function() {
+                noSection.classList.add('hidden');
+                revealSection(finalSection);
+            });
+
+            skipShareBtn.addEventListener('click', function() {
+                finalSection.classList.add('hidden');
+                shareSection.scrollIntoView({ behavior: 'smooth' });
+            });
+
+            openIgBtn.addEventListener('click', function() {
+                window.open('https://www.instagram.com/light_shadowknight/', '_blank');
+                showToast('📸 Instagram opened — share your thoughts in the comments!');
+                finalSection.classList.add('hidden');
+                setTimeout(() => shareSection.scrollIntoView({ behavior: 'smooth' }), 500);
+            });
+
+            // ─── OPEN FORM: just a regular link, no extra JS needed ───
+            // But we can show a toast for feedback if desired.
+            if (openFormBtn) {
+                openFormBtn.addEventListener('click', function(e) {
+                    // The link will open in a new tab via target="_blank"
+                    // Show a quick toast to confirm
+                    showToast('📝 Opening Google Forms…', 2000);
+                });
+            }
+
+            // ─── SHARE MODAL ───
+            function openShareModal() {
+                shareOverlay.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeShareModal() {
+                shareOverlay.classList.remove('open');
+                document.body.style.overflow = '';
+            }
+
+            navShareBtn.addEventListener('click', openShareModal);
+            mainShareBtn.addEventListener('click', openShareModal);
+            shareCloseBtn.addEventListener('click', closeShareModal);
+            modalCloseBtn.addEventListener('click', closeShareModal);
+
+            shareOverlay.addEventListener('click', function(e) {
+                if (e.target === this) closeShareModal();
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && shareOverlay.classList.contains('open')) {
+                    closeShareModal();
+                }
+            });
+
+            // ─── SHARE ACTIONS ───
+            const shareUrl = encodeURIComponent(window.location.href);
+            const shareTitle = encodeURIComponent('Light Shadow Knight — A story about judging beyond looks');
+
+            function shareTo(platform) {
+                let url = '';
+                switch (platform) {
+                    case 'whatsapp':
+                        url = 'https://api.whatsapp.com/send?text=' + shareTitle + '%20' + shareUrl;
+                        break;
+                    case 'instagram':
+                        if (navigator.clipboard) {
+                            navigator.clipboard.writeText(window.location.href).then(() => {
+                                showToast('📸 Link copied! Paste it in your Instagram bio or story.', 3200);
+                            }).catch(() => {
+                                showToast('📸 Open Instagram and share the link manually.', 3000);
+                            });
+                        } else {
+                            showToast('📸 Open Instagram and share the link manually.', 3000);
+                        }
+                        closeShareModal();
+                        return;
+                    case 'x':
+                        url = 'https://x.com/intent/tweet?text=' + shareTitle + '&url=' + shareUrl;
+                        break;
+                    case 'email':
+                        url = 'mailto:?subject=' + shareTitle + '&body=' + shareTitle + '%0A%0A' + shareUrl;
+                        break;
+                    default:
+                        return;
+                }
+                if (url) {
+                    window.open(url, '_blank');
+                    showToast('✅ Shared to ' + platform.charAt(0).toUpperCase() + platform.slice(1), 2000);
+                }
+                closeShareModal();
+            }
+
+            document.querySelectorAll('.share-btn[data-share]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    shareTo(this.dataset.share);
+                });
+            });
+
+            // ─── COPY LINK ───
+            function copyLink() {
+                const url = window.location.href;
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(url).then(() => {
+                        showToast('🔗 Link copied to clipboard!', 2200);
+                    }).catch(() => {
+                        fallbackCopy(url);
+                    });
+                } else {
+                    fallbackCopy(url);
+                }
+                closeShareModal();
+            }
+
+            function fallbackCopy(text) {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                ta.style.pointerEvents = 'none';
+                document.body.appendChild(ta);
+                ta.select();
+                try {
+                    document.execCommand('copy');
+                    showToast('🔗 Link copied!', 2000);
+                } catch (_) {
+                    showToast('🔗 Please copy the link manually.', 2500);
+                }
+                document.body.removeChild(ta);
+            }
+
+            modalCopyBtn.addEventListener('click', copyLink);
+            copyLinkBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                copyLink();
+            });
+
+            // ─── NAV BRAND SCROLL TOP ───
+            navBrand.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+
+            // ─── BUTTON TAP FEEDBACK (touch) ───
+            document.querySelectorAll('.btn, .share-btn, .nav-share, .social-links a, .btn-full, .modal-close')
+                .forEach(el => {
+                    el.addEventListener('touchstart', function() {
+                        this.style.transition = 'transform 0.12s';
+                        this.style.transform = 'scale(0.94)';
+                    }, { passive: true });
+                    el.addEventListener('touchend', function() {
+                        this.style.transform = 'scale(1)';
+                    }, { passive: true });
+                    el.addEventListener('touchcancel', function() {
+                        this.style.transform = 'scale(1)';
+                    }, { passive: true });
+                });
+
+            console.log('✦ Light Shadow Knight · premium interactions loaded');
+        })();
+    </script>
+
+</body>
+</html>
