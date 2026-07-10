@@ -267,18 +267,11 @@
         .nav-brand:hover {
             opacity: 0.8;
         }
-        .nav-brand .logo-icon {
+        .nav-logo-img {
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--gold), var(--gold2));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            color: var(--bg);
-            font-weight: 800;
-            font-family: var(--font-serif);
+            object-fit: cover;
             box-shadow: 0 0 20px rgba(245, 215, 110, 0.15);
             flex-shrink: 0;
         }
@@ -607,19 +600,13 @@
             margin-bottom: 12px;
             text-decoration: none;
         }
-        footer .footer-brand .logo-icon {
+        .footer-logo-img {
             width: 36px;
             height: 36px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--gold), var(--gold2));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            color: var(--bg);
-            font-weight: 800;
-            font-family: var(--font-serif);
+            object-fit: cover;
             box-shadow: 0 0 20px rgba(245, 215, 110, 0.10);
+            flex-shrink: 0;
         }
         footer .footer-credit {
             color: var(--text-muted);
@@ -988,7 +975,7 @@
     ============================================================ -->
     <nav class="top-nav" id="topNav">
         <a href="#" class="nav-brand" id="navBrand">
-            <span class="logo-icon">✦</span>
+            <img src="logo.png" alt="Light Shadow Knight Logo" class="nav-logo-img" />
             <span class="brand-text">Light <span>Shadow Knight</span></span>
         </a>
         <button class="nav-share" id="navShareBtn">
@@ -1016,7 +1003,7 @@
 
         <!-- ─── STORY ─── -->
         <div class="story glass" id="story">
-            <!-- New story content injected via JavaScript below -->
+            <!-- Story content injected via JavaScript -->
         </div>
 
         <!-- ─── REFLECTION QUESTION ─── -->
@@ -1099,7 +1086,7 @@
     ============================================================ -->
     <footer>
         <a href="#" class="footer-brand">
-            <span class="logo-icon">✦</span>
+            <img src="logo.png" alt="Light Shadow Knight Logo" class="footer-logo-img" />
             Light Shadow Knight
         </a>
         <div class="footer-credit">Created by <strong>Light</strong> · A story about seeing beyond the surface</div>
