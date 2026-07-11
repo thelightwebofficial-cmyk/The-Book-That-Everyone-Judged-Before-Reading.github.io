@@ -3,8 +3,19 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
-    <title>Light Shadow Knight · The Book That Everyone Judged Before Reading</title>
+    <title>The Light Web Official · The Book That Everyone Judged Before Reading</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📖</text></svg>" />
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9NWD7Q5M0S"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-9NWD7Q5M0S');
+    </script>
+    
     <style>
         /* ============================================================
                    ROOT & RESET
@@ -51,7 +62,6 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* reduce motion */
         @media (prefers-reduced-motion: reduce) {
             *,
             *::before,
@@ -80,9 +90,6 @@
             }
         }
 
-        /* ============================================================
-                   SCROLLBAR
-                   ============================================================ */
         ::-webkit-scrollbar {
             width: 6px;
         }
@@ -167,7 +174,6 @@
             height: 10px;
         }
 
-        /* ── Particle trail ── */
         .trail-particle {
             position: fixed;
             border-radius: 50%;
@@ -179,7 +185,6 @@
             opacity: 0;
         }
 
-        /* ── Click ripple ── */
         .click-ripple {
             position: fixed;
             border-radius: 50%;
@@ -201,7 +206,6 @@
             }
         }
 
-        /* ── Click particles ── */
         .click-particle {
             position: fixed;
             border-radius: 50%;
@@ -358,6 +362,9 @@
             box-shadow: 0 12px 48px rgba(0, 0, 0, 0.7);
             border: 1px solid rgba(245, 215, 110, 0.10);
             display: block;
+            background: #0a0f1f;
+            min-height: 120px;
+            object-fit: cover;
         }
 
         .hero-content .hero-badge {
@@ -829,6 +836,55 @@
             transform: scale(0.97);
         }
 
+        /* ─── EMAIL CONTACT CARD ─── */
+        .email-contact-card {
+            background: rgba(245, 215, 110, 0.04);
+            border: 1px solid rgba(245, 215, 110, 0.08);
+            border-radius: 14px;
+            padding: 16px 20px;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .email-contact-card .email-label {
+            color: var(--text-muted);
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .email-contact-card .email-label strong {
+            color: var(--gold);
+            font-weight: 500;
+            font-family: var(--font-sans);
+        }
+        .email-contact-card .btn-email {
+            background: rgba(245, 215, 110, 0.10);
+            border: 1px solid rgba(245, 215, 110, 0.15);
+            border-radius: 30px;
+            padding: 8px 20px;
+            color: var(--gold);
+            font-size: 13px;
+            font-weight: 500;
+            font-family: var(--font-sans);
+            cursor: pointer;
+            transition: background 0.25s, transform 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .email-contact-card .btn-email:hover {
+            background: rgba(245, 215, 110, 0.18);
+            transform: translateY(-1px);
+        }
+        .email-contact-card .btn-email:active {
+            transform: scale(0.95);
+        }
+
         /* ============================================================
                    TOAST
                    ============================================================ */
@@ -938,6 +994,14 @@
                 max-width: 100%;
                 margin-bottom: 20px;
             }
+            .email-contact-card {
+                flex-direction: column;
+                align-items: stretch;
+                text-align: center;
+            }
+            .email-contact-card .btn-email {
+                justify-content: center;
+            }
         }
 
         @media (max-width: 420px) {
@@ -990,8 +1054,8 @@
     ============================================================ -->
     <nav class="top-nav" id="topNav">
         <a href="#" class="nav-brand" id="navBrand">
-            <img src="logo.png" alt="Light Shadow Knight Logo" class="nav-logo-img" />
-            <span class="brand-text">Light <span>Shadow Knight</span></span>
+            <img src="logo.png" alt="The Light Web Official Logo" class="nav-logo-img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 fill=%22%230a0f1f%22/%3E%3Ctext x=%2250%22 y=%2270%22 text-anchor=%22middle%22 font-size=%2260%22%3E📖%3C/text%3E%3C/svg%3E'" />
+            <span class="brand-text">The Light <span>Web Official</span></span>
         </a>
         <button class="nav-share" id="navShareBtn">
             <span>📤</span>
@@ -1004,7 +1068,7 @@
     ============================================================ -->
     <section class="hero" id="hero">
         <div class="hero-content">
-            <img src="banner.png" alt="Light Shadow Knight Banner" class="hero-banner-img" />
+            <img src="banner.png" alt="The Light Web Official Banner" class="hero-banner-img" onerror="this.src='https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=800&auto=format&fit=crop'" />
             <div class="hero-badge">✦ A Story About Seeing Deeper</div>
             <h1>The Book That Everyone Judged Before Reading</h1>
             <div class="subtitle">“Do not judge a book by its cover.”</div>
@@ -1102,10 +1166,10 @@
     ============================================================ -->
     <footer>
         <a href="#" class="footer-brand">
-            <img src="logo.png" alt="Light Shadow Knight Logo" class="footer-logo-img" />
-            Light Shadow Knight
+            <img src="logo.png" alt="The Light Web Official Logo" class="footer-logo-img" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 fill=%22%230a0f1f%22/%3E%3Ctext x=%2250%22 y=%2270%22 text-anchor=%22middle%22 font-size=%2260%22%3E📖%3C/text%3E%3C/svg%3E'" />
+            The Light Web Official
         </a>
-        <div class="footer-credit">Created by <strong>Light</strong> · A story about seeing beyond the surface</div>
+        <div class="footer-credit">Created by <strong>Light Shadow Knight</strong> · A story about seeing beyond the surface</div>
         <div class="footer-social">
             <a href="https://www.instagram.com/light_shadowknight/" target="_blank">Instagram</a>
             <a href="https://twitch.tv/light_shadowknight" target="_blank">Twitch</a>
@@ -1114,7 +1178,7 @@
             <a href="https://thelightwebofficial.renderforestsites.com/" target="_blank">Website</a>
             <a href="https://medibang.com/u/THELIGHTWEBOFFICIAL/" target="_blank">Medibang</a>
         </div>
-        <div class="footer-copy">© 2026 Light Shadow Knight · All rights reserved</div>
+        <div class="footer-copy">© 2026 The Light Web Official · All rights reserved</div>
     </footer>
 
     <!-- ============================================================
@@ -1143,6 +1207,17 @@
                     <span class="icon">✉️</span>
                     <span class="label">Email</span>
                 </button>
+            </div>
+
+            <!-- ─── EMAIL CONTACT CARD ─── -->
+            <div class="email-contact-card">
+                <span class="email-label">
+                    ✉️ Contact the founder:
+                    <strong>light162010@gmail.com</strong>
+                </span>
+                <a href="mailto:light162010@gmail.com?subject=The%20Book%20That%20Everyone%20Judged%20Before%20Reading" class="btn-email">
+                    📧 Send Email
+                </a>
             </div>
 
             <div class="share-divider">or</div>
@@ -1236,7 +1311,6 @@
             let cursorVisible = false;
 
             if (!reduceMotion && !('ontouchstart' in window)) {
-                // track mouse
                 document.addEventListener('mousemove', function(e) {
                     targetX = e.clientX;
                     targetY = e.clientY;
@@ -1251,7 +1325,6 @@
                     cursorGlow.style.opacity = '0';
                 });
 
-                // smooth lerp loop
                 function animateCursor() {
                     if (cursorVisible) {
                         const dx = targetX - cursorX;
@@ -1265,7 +1338,6 @@
                 }
                 animateCursor();
 
-                // hover states
                 const hoverTargets = document.querySelectorAll(
                     'a, button, .btn, .share-btn, .nav-share, .social-links a, .modal-close, .btn-full, .footer-social a, .nav-brand'
                 );
@@ -1278,7 +1350,6 @@
                     });
                 });
 
-                // ─── Particle Trail ───
                 let trailParticles = [];
                 let lastSpawn = 0;
 
@@ -1337,7 +1408,6 @@
                 }
                 requestAnimationFrame(trailLoop);
 
-                // ─── Click Ripple + Particles ───
                 document.addEventListener('click', function(e) {
                     const x = e.clientX;
                     const y = e.clientY;
@@ -1362,7 +1432,8 @@
                         p.style.height = s + 'px';
                         p.style.left = x + 'px';
                         p.style.top = y + 'px';
-                        p.style.background = `radial-gradient(circle, var(--gold) 0%, rgba(245,215,110,0.3) 100%)`;
+                        p.style.background =
+                        `radial-gradient(circle, var(--gold) 0%, rgba(245,215,110,0.3) 100%)`;
                         p.style.boxShadow = '0 0 12px rgba(245,215,110,0.3)';
                         document.body.appendChild(p);
 
@@ -1421,7 +1492,8 @@
                     p.style.height = s + 'px';
                     p.style.left = x + 'px';
                     p.style.top = y + 'px';
-                    p.style.background = `radial-gradient(circle, var(--gold) 0%, rgba(245,215,110,0.2) 100%)`;
+                    p.style.background =
+                    `radial-gradient(circle, var(--gold) 0%, rgba(245,215,110,0.2) 100%)`;
                     document.body.appendChild(p);
 
                     const angle = Math.random() * 2 * Math.PI;
@@ -1648,26 +1720,18 @@ Because every person is a book written by countless experiences.
 
 And the greatest mistake humanity makes is judging the story before reading the pages inside.`;
 
-                // Split by double newline to get paragraphs
                 const paragraphs = newStoryText.split(/\n\n/).filter(p => p.trim().length > 0);
-                // Clear existing content
                 storyEl.innerHTML = '';
-                // Append each paragraph as a <p>
                 paragraphs.forEach(text => {
                     const p = document.createElement('p');
-                    // Remove leading "# " if present (title)
                     let content = text.trim();
                     if (content.startsWith('"# ')) {
-                        content = content.substring(2); // remove the "# " but keep the quote?
-                        // Actually the first paragraph is the title: "# The Book That Everyone Judged Before Reading"
-                        // We'll keep it as is, but without the "# " prefix.
+                        content = content.substring(2);
                         content = content.replace(/^#\s+/, '');
                     }
                     p.textContent = content;
                     storyEl.appendChild(p);
                 });
-
-                // Re-trigger scroll to reveal paragraphs
                 setTimeout(handleScroll, 100);
             })();
 
@@ -1739,7 +1803,7 @@ And the greatest mistake humanity makes is judging the story before reading the 
 
             // ─── SHARE ACTIONS ───
             const shareUrl = encodeURIComponent(window.location.href);
-            const shareTitle = encodeURIComponent('Light Shadow Knight — A story about judging beyond looks');
+            const shareTitle = encodeURIComponent('The Light Web Official — A story about judging beyond looks');
 
             function shareTo(platform) {
                 let url = '';
@@ -1748,22 +1812,16 @@ And the greatest mistake humanity makes is judging the story before reading the 
                         url = 'https://api.whatsapp.com/send?text=' + shareTitle + '%20' + shareUrl;
                         break;
                     case 'instagram':
-                        if (navigator.clipboard) {
-                            navigator.clipboard.writeText(window.location.href).then(() => {
-                                showToast('📸 Link copied! Paste it in your Instagram bio or story.', 3200);
-                            }).catch(() => {
-                                showToast('📸 Open Instagram and share the link manually.', 3000);
-                            });
-                        } else {
-                            showToast('📸 Open Instagram and share the link manually.', 3000);
-                        }
+                        window.open('https://www.instagram.com/light_shadowknight/', '_blank');
+                        showToast('📸 Instagram profile opened — share this story in your post or story!', 3200);
                         closeShareModal();
                         return;
                     case 'x':
                         url = 'https://x.com/intent/tweet?text=' + shareTitle + '&url=' + shareUrl;
                         break;
                     case 'email':
-                        url = 'mailto:?subject=' + shareTitle + '&body=' + shareTitle + '%0A%0A' + shareUrl;
+                        url = 'mailto:?subject=' + shareTitle + '&body=' + shareTitle + '%0A%0A' + shareUrl +
+                            '%0A%0A— Sent from The Light Web Official';
                         break;
                     default:
                         return;
@@ -1840,7 +1898,7 @@ And the greatest mistake humanity makes is judging the story before reading the 
                     }, { passive: true });
                 });
 
-            console.log('✦ Light Shadow Knight · premium interactions loaded');
+            console.log('✦ The Light Web Official · premium interactions loaded');
         })();
     </script>
 
