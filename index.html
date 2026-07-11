@@ -4,21 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
     <title>The Light Web Official · The Book That Everyone Judged Before Reading</title>
-    
+
     <!-- Favicon -->
-    <link rel="icon" href="favicon.ico" />
-    
+    <link rel="icon" href="./favicon.ico" />
+
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-    
+
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-9NWD7Q5M0S"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-9NWD7Q5M0S');
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-9NWD7Q5M0S');
     </script>
-    
+
     <style>
         /* ============================================================
                    ROOT & RESET
@@ -1071,7 +1072,7 @@
     ============================================================ -->
     <section class="hero" id="hero">
         <div class="hero-content">
-            <img src="banner.png" alt="The Light Web Official Banner" class="hero-banner-img" onerror="this.src='https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=800&auto=format&fit=crop'" />
+            <img src="./banner.png" alt="The Light Web Official Banner" class="hero-banner-img" onerror="this.src='https://images.unsplash.com/photo-1512820790803-83ca734da794?q=80&w=800&auto=format&fit=crop'" />
             <div class="hero-badge">✦ A Story About Seeing Deeper</div>
             <h1>The Book That Everyone Judged Before Reading</h1>
             <div class="subtitle">“Do not judge a book by its cover.”</div>
@@ -1436,7 +1437,7 @@
                         p.style.left = x + 'px';
                         p.style.top = y + 'px';
                         p.style.background =
-                        `radial-gradient(circle, var(--gold) 0%, rgba(245,215,110,0.3) 100%)`;
+                            'radial-gradient(circle, var(--gold) 0%, rgba(245,215,110,0.3) 100%)';
                         p.style.boxShadow = '0 0 12px rgba(245,215,110,0.3)';
                         document.body.appendChild(p);
 
@@ -1496,7 +1497,7 @@
                     p.style.left = x + 'px';
                     p.style.top = y + 'px';
                     p.style.background =
-                    `radial-gradient(circle, var(--gold) 0%, rgba(245,215,110,0.2) 100%)`;
+                        'radial-gradient(circle, var(--gold) 0%, rgba(245,215,110,0.2) 100%)';
                     document.body.appendChild(p);
 
                     const angle = Math.random() * 2 * Math.PI;
